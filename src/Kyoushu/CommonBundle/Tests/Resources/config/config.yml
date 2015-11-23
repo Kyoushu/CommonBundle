@@ -1,0 +1,42 @@
+parameters:
+    kernel.secret: abcd123
+
+framework:
+    test: ~
+    router:
+        resource: "%kernel.root_dir%/Resources/config/routing.yml"
+        strict_requirements: ~
+    templating:
+        engines: ['twig']
+    validation:
+        enabled: true
+        enable_annotations: true
+    form:
+        enabled: true
+        csrf_protection:
+            enabled: false
+
+doctrine:
+    dbal:
+        driver:   pdo_sqlite
+        user:     ~
+        password: ~
+        memory:   false
+        path: "%kernel.cache_dir%/test.db"
+        charset:  UTF8
+
+    orm:
+        auto_generate_proxy_classes: true
+        mappings:
+            KyoushuCommonBundle:
+                type: annotation
+                dir: "%kernel.root_dir%/../Entity"
+                prefix: Kyoushu\CommonBundle\Entity
+
+twig:
+    debug:            true
+    strict_variables: true
+    paths:
+        "%kernel.root_dir%/../Resources/views": "KyoushuCommonBundle"
+
+# Place your bundle testing config here

@@ -1,0 +1,5 @@
+services:
+
+    #kyoushu_common:
+    #    class: Kyoushu\CommonBundle\MyClass
+    #    arguments: ['foo', 'bar']

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="kyoushu/common-bundle" default="build">
+
+    <target name="build" depends="prepare,phpunit" description=""/>
+
+    <target name="clean" unless="clean.done" description="Cleanup build artifacts">
+        <delete dir="${basedir}/src/Kyoushu/CommonBundle/Tests/temp"/>
+        <delete dir="${basedir}/vendor"/>
+        <property name="clean.done" value="true"/>
+    </target>
+
+    <target name="prepare" unless="prepare.done" depends="clean" description="Prepare for build">
+        <exec executable="composer" failonerror="true" taskname="composer">
+            <arg value="install"/>
+        </exec>
+        <property name="prepare.done" value="true"/>
+    </target>
+
+    <target name="phpunit" unless="phpunit.done" depends="prepare" description="Run unit tests with PHPUnit">
+        <exec executable="${basedir}/vendor/bin/phpunit" failonerror="true" taskname="phpunit">
+            <arg value="--configuration"/>
+            <arg path="${basedir}/phpunit.xml"/>
+        </exec>
+        <property name="phpunit.done" value="true"/>
+    </target>
+
+</project>
