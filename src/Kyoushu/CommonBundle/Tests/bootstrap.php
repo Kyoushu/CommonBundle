@@ -18,8 +18,4 @@ register_shutdown_function(function(){
     $tempDir = sprintf('%s/temp', __DIR__);
     if($fs->exists($tempDir)) $fs->remove($tempDir);
 
-    $testFilePath = sprintf('%s/../../../../test', __DIR__);
-
-    if($fs->exists($tempDir)) $fs->remove($testFilePath);
-
 });
