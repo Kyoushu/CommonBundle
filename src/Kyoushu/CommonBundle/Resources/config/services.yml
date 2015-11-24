@@ -1,5 +1,18 @@
 services:
 
-    #kyoushu_common:
-    #    class: Kyoushu\CommonBundle\MyClass
-    #    arguments: ['foo', 'bar']
+    kyoushu_common.routing.router_cache:
+        class: Kyoushu\CommonBundle\Routing\RouterCache
+        arguments:
+            - @router
+
+    kyoushu_common.routing.dynamic_route_loader:
+        class: Kyoushu\CommonBundle\Routing\DynamicRouteLoader
+        arguments:
+            - @doctrine.orm.default_entity_manager
+        tags:
+            - { name: routing.loader }
+
+    kyoushu_common.upload.handler:
+        class: Kyoushu\CommonBundle\Upload\UploadHandler
+        arguments:
+            - "%kernel.root_dir%/../web"

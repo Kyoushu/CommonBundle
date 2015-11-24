@@ -1,0 +1,3 @@
+_kyoushu_common_dynamic_routes:
+    resource: .
+    type: kyoushu_common_dynamic_routes
