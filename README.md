@@ -21,26 +21,9 @@ Add the following line to app/AppKernel.php
     );
     
 ## Todo
-
-### Services
-
-    Upload handler
-    Dynamic route loader
     
 ### Event Listeners/Subscribers
 
     Entity
         Upload handler
-    
-### Classes
-
-    Kyoushu
-        CommonBundle
-            DynamicRoute
-                DynamicRouteInterface
-                    getUrl()
-                    getRouteName()
-                    getRouteDefaults()
-                    getExtraRoutes()
-                DynamicRouteLoader
-                    (TBC)
+        Router cache invalidation
