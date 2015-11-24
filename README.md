@@ -43,7 +43,7 @@ Add the following line to app/AppKernel.php
             Upload
                 UploadInterface
                     getFile()
-                    setFile($file)
+                    setFile($file)l
                     getRelTargetDir()
                     getRelPath()
                 UploadHandler

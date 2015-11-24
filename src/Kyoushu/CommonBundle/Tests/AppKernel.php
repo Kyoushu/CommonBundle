@@ -6,6 +6,7 @@ use Kyoushu\CommonBundle\KyoushuCommonBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
+use Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -59,7 +60,8 @@ class AppKernel extends Kernel
             new FrameworkBundle(),
             new TwigBundle(),
             new DoctrineBundle(),
-            new KyoushuCommonBundle()
+            new KyoushuCommonBundle(),
+            new StofDoctrineExtensionsBundle()
         );
     }
 

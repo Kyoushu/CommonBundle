@@ -1,5 +1,6 @@
 parameters:
     kernel.secret: abcd123
+    locale: en
 
 framework:
     test: ~
@@ -30,13 +31,20 @@ doctrine:
         mappings:
             KyoushuCommonBundle:
                 type: annotation
-                dir: "%kernel.root_dir%/../Entity"
-                prefix: Kyoushu\CommonBundle\Entity
+                dir: "%kernel.root_dir%/../Tests/Entity"
+                prefix: Kyoushu\CommonBundle\Tests\Entity
 
 twig:
     debug:            true
     strict_variables: true
     paths:
         "%kernel.root_dir%/../Resources/views": "KyoushuCommonBundle"
+
+stof_doctrine_extensions:
+    default_locale: %locale%
+    orm:
+        default:
+            timestampable: true
+            sluggable: true
 
 # Place your bundle testing config here
