@@ -1,5 +1,7 @@
 # Kyoushu/CommonBundle
 
+[![Build Status](https://travis-ci.org/Kyoushu/CommonBundle.svg)](https://travis-ci.org/Kyoushu/CommonBundle)
+
 This file has been generated automatically. It will require editing to reflect describe functionality provided by this bundle.
 
 ## Installation
