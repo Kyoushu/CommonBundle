@@ -3,6 +3,7 @@
 namespace Kyoushu\CommonBundle\EntityFinder;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -151,14 +152,22 @@ abstract class AbstractEntityFinder implements EntityFinderInterface
     }
 
     /**
+     * @return EntityRepository
+     */
+    public function getRepository()
+    {
+        return $this->getEntityManager()
+            ->getRepository( $this->getEntityClass() )
+        ;
+    }
+
+    /**
      * @return QueryBuilder
      */
     public function createQueryBuilder()
     {
-        $entityClass = $this->getEntityClass();
-
-        $queryBuilder = $this->getEntityManager()
-            ->getRepository($entityClass)
+        $queryBuilder = $this
+            ->getRepository()
             ->createQueryBuilder(self::ROOT_ENTITY_ALIAS)
         ;
 

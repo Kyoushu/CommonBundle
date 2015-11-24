@@ -3,6 +3,7 @@
 namespace Kyoushu\CommonBundle\EntityFinder;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
 interface EntityFinderInterface
@@ -16,6 +17,11 @@ interface EntityFinderInterface
      * @return EntityManager
      */
     public function getEntityManager();
+
+    /**
+     * @return EntityRepository
+     */
+    public function getRepository();
 
     /**
      * @return int
