@@ -13,6 +13,11 @@ class TraitsEntityFinder extends AbstractEntityFinder
      */
     protected $title;
 
+    /**
+     * @var \DateTime|null
+     */
+    protected $createdAfter;
+
     public function getEntityClass()
     {
         return 'Kyoushu\CommonBundle\Tests\Entity\TraitsEntity';
@@ -37,11 +42,29 @@ class TraitsEntityFinder extends AbstractEntityFinder
     }
 
     /**
+     * @return \DateTime|null
+     */
+    public function getCreatedAfter()
+    {
+        return $this->createdAfter;
+    }
+
+    /**
+     * @param \DateTime|null $createdAfter
+     * @return $this
+     */
+    public function setCreatedAfter($createdAfter)
+    {
+        $this->createdAfter = $createdAfter;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getRouteParameterKeys()
     {
-        return array('page', 'perPage', 'title');
+        return array('page', 'perPage', 'title', 'createdAfter');
     }
 
     /**
@@ -51,8 +74,14 @@ class TraitsEntityFinder extends AbstractEntityFinder
     {
         $title = $this->getTitle();
         if($title !== null){
-            $queryBuilder->andWhere('entity.title like :like_title');
+            $queryBuilder->andWhere('entity.title LIKE :like_title');
             $queryBuilder->setParameter('like_title', '%' . $title . '%');
+        }
+
+        $createdAfter = $this->getCreatedAfter();
+        if($createdAfter !== null){
+            $queryBuilder->andWhere('entity.created >= :created_after');
+            $queryBuilder->setParameter('created_after', $createdAfter);
         }
     }
 

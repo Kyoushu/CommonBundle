@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Kyoushu\CommonBundle\Exception\EntityFinderException;
 use Kyoushu\CommonBundle\Meta\PropertyTypeDetector;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -121,6 +122,19 @@ abstract class AbstractEntityFinder implements EntityFinderInterface
 
     public function setRouteParameters(array $parameters)
     {
+
+        $keys = $this->getRouteParameterKeys();
+
+        foreach(array_keys($parameters) as $key){
+            if(!in_array($key, $keys)){
+                throw new EntityFinderException(sprintf(
+                    '%s is not a valid route parameter key for %s',
+                    $key,
+                    get_class($this)
+                ));
+            }
+        }
+
         foreach($this->getRouteParameterKeys() as $key){
             if(!isset($parameters[$key])) continue;
             $value = $parameters[$key];

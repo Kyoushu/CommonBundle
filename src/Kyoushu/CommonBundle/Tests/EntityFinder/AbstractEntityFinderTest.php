@@ -70,6 +70,45 @@ class AbstractEntityFinderTest extends KernelTestCase
 
     }
 
+    public function testRouteParameters()
+    {
+
+        $finder = new TraitsEntityFinder($this->getEntityManager());
+
+        $finder->setPerPage(15);
+        $finder->setPage(2);
+        $finder->setTitle('foo');
+        $finder->setCreatedAfter(new \DateTime('2015-01-01 00:00'));
+
+        $this->assertEquals(
+            array(
+                'page' => 2,
+                'perPage' => 15,
+                'title' => 'foo',
+                'createdAfter' => '2015-01-01T00:00:00+00:00'
+            ),
+            $finder->getRouteParameters()
+        );
+
+        $finder->setRouteParameters(array(
+            'page' => 3,
+            'perPage' => '-',
+            'title' => 'bar',
+            'createdAfter' => '3rd Feb 2016 00:00'
+        ));
+
+        $this->assertEquals(
+            array(
+                'page' => 3,
+                'perPage' => null,
+                'title' => 'bar',
+                'createdAfter' => '2016-02-03T00:00:00+00:00'
+            ),
+            $finder->getRouteParameters()
+        );
+
+    }
+
     public function testGetResultPaginated()
     {
 
