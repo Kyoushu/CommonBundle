@@ -56,6 +56,12 @@ interface EntityFinderInterface
     public function getRouteParameters();
 
     /**
+     * @param array $parameters
+     * @return $this
+     */
+    public function setRouteParameters(array $parameters);
+
+    /**
      * @return int
      */
     public function getTotal();

@@ -7,7 +7,9 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Kyoushu\CommonBundle\Meta\PropertyTypeDetector;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 abstract class AbstractEntityFinder implements EntityFinderInterface
 {
@@ -28,6 +30,11 @@ abstract class AbstractEntityFinder implements EntityFinderInterface
     protected $perPage;
 
     /**
+     * @var PropertyAccessor
+     */
+    protected $propertyAccessor;
+
+    /**
      * @param EntityManager $entityManager
      */
     public function __construct(EntityManager $entityManager)
@@ -35,6 +42,7 @@ abstract class AbstractEntityFinder implements EntityFinderInterface
         $this->entityManager = $entityManager;
         $this->setPage(1);
         $this->setPerPage(self::PER_PAGE_DEFAULT);
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
     /**
@@ -94,13 +102,62 @@ abstract class AbstractEntityFinder implements EntityFinderInterface
      */
     public function getRouteParameters()
     {
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $parameters = array();
         foreach($this->getRouteParameterKeys() as $key){
-            $value = $propertyAccessor->getValue($this, $key);
+            $value = $this->propertyAccessor->getValue($this, $key);
+            if($value === 'NULL'){
+                $value = self::ROUTE_PARAMETER_NULL_PLACEHOLDER;
+            }
+            elseif(is_object($value)){
+                if($value instanceof \DateTime){
+                    $value = $value->format('c');
+                }
+            }
+
             $parameters[$key] = $value;
         }
         return $parameters;
+    }
+
+    public function setRouteParameters(array $parameters)
+    {
+        foreach($this->getRouteParameterKeys() as $key){
+            if(!isset($parameters[$key])) continue;
+            $value = $parameters[$key];
+
+            if($value === self::ROUTE_PARAMETER_NULL_PLACEHOLDER){
+                $value = null;
+            }
+
+            $detectedType = PropertyTypeDetector::detect($this, $key);
+            if($detectedType === '\DateTime'){
+                $value = new \DateTime($value);
+            }
+
+            $this->setPropertyValue($key, $value);
+
+        }
+        return $this;
+    }
+
+    /**
+     * @param string $propertyName
+     * @return mixed
+     */
+    protected function getPropertyValue($propertyName)
+    {
+        return $this->propertyAccessor->getValue($this, $propertyName);
+    }
+
+    /**
+     * @param string $propertyName
+     * @param mixed $value
+     * @return $this
+     */
+    protected function setPropertyValue($propertyName, $value)
+    {
+        $this->propertyAccessor->setValue($this, $propertyName, $value);
+        return $this;
     }
 
     /**
