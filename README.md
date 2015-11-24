@@ -19,27 +19,11 @@ Add the following line to app/AppKernel.php
     );
     
 ## Todo
-
-### Bundle Dependencies
-
-    stof/doctrine-extensions-bundle ~1.2
     
 ### Classes
 
     Kyoushu
         CommonBundle
-            Entity
-                Trait
-                    TimestampTrait
-                        \DateTime $created
-                        \DateTime $updated
-                    TitleTrait
-                        string $title
-                    TitleSlugTrait
-                        string $title
-                        string $slug
-                    SummaryTrait
-                        string $summary
             Upload
                 UploadInterface
                     getFile()
