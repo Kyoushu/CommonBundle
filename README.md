@@ -25,6 +25,11 @@ $bundles = array(
     // ...
 );
 ```
+
+## Todo
+
+* Documentation for upload handler
+* Documentation for dynamic routes
     
 ## Entity Traits
 
@@ -54,6 +59,71 @@ class MyEntity
     // - $created is set to \DateTime('now') on persist
     // - $updated is set to \DateTime('now') on persist/update
     use EntityTraits\TimestampTrait;
+
+}
+```
+
+## Entity Finders
+
+You can create an entity finder by extending the class \Kyoushu\CommonBundle\EntityFinder\AbstractEntityFinder
+
+```php
+namespace AppBundle\EntityFinder;
+
+use Kyoushu\CommonBundle\EntityFinder\AbstractEntityFinder;
+
+class MyEntityFinder extends AbstractEntityFinder
+{
+
+    public function getEntityClass()
+    {
+        return 'AppBundle\Entity\MyEntity';
+    }
+
+}
+```
+
+Custom parameters can be used by overriding configureQueryBuilder() and getRouteParameterKeys()
+
+```php
+namespace AppBundle\EntityFinder;
+
+use Kyoushu\CommonBundle\EntityFinder\AbstractEntityFinder;
+
+class MyEntityFinder extends AbstractEntityFinder
+{
+
+    protected $title;
+
+    public function getEntityClass()
+    {
+        return 'AppBundle\Entity\MyEntity';
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    public function getRouteParameterKeys()
+    {
+        return array('page', 'perPage', 'title');
+    }
+
+    public function configureQueryBuilder(QueryBuilder $queryBuilder)
+    {
+        $title = $this->getTitle();
+        if($title !== null){
+            $queryBuilder->andWhere('entity.title like :like_title');
+            $queryBuilder->setParameter('like_title', '%' . $title . '%');
+        }
+    }
 
 }
 ```
