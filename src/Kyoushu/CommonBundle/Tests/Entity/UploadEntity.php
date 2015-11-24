@@ -1,18 +1,28 @@
 <?php
 
-namespace Kyoushu\CommonBundle\Tests\Upload;
+namespace Kyoushu\CommonBundle\Tests\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use Kyoushu\CommonBundle\Entity\Traits\IdTrait;
 use Kyoushu\CommonBundle\Upload\UploadInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
-class MockUpload implements UploadInterface
+/**
+ * @ORM\Entity()
+ */
+class UploadEntity implements UploadInterface
 {
+
+    use IdTrait;
 
     /**
      * @var File|null
      */
     protected $file;
 
+    /**
+     * @var string|null
+     */
     protected $relPath;
 
     /**
@@ -34,7 +44,7 @@ class MockUpload implements UploadInterface
     }
 
     /**
-     * @return mixed
+     * @return null|string
      */
     public function getRelPath()
     {
@@ -42,7 +52,7 @@ class MockUpload implements UploadInterface
     }
 
     /**
-     * @param string|null $relPath
+     * @param null|string $relPath
      * @return $this
      */
     public function setRelPath($relPath)
@@ -51,6 +61,9 @@ class MockUpload implements UploadInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getRelDir()
     {
         return 'uploads/foo/bar';

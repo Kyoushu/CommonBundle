@@ -27,6 +27,14 @@ class UploadHandler
     }
 
     /**
+     * @return string
+     */
+    public function getWebDir()
+    {
+        return $this->webDir;
+    }
+
+    /**
      * @param File $file
      * @return string
      */

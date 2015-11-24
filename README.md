@@ -19,11 +19,3 @@ Add the following line to app/AppKernel.php
         new Kyoushu\CommonBundle\KyoushuCommonBundle(),
         // ...
     );
-    
-## Todo
-    
-### Event Listeners/Subscribers
-
-    Entity
-        Upload handler
-        Router cache invalidation

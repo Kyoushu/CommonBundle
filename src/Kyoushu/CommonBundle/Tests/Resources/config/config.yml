@@ -5,7 +5,7 @@ parameters:
 framework:
     test: ~
     router:
-        resource: "%kernel.root_dir%/Resources/config/routing.yml"
+        resource: "%kernel.root_dir%/../Resources/config/routing.yml"
     templating:
         engines: ['twig']
     validation:

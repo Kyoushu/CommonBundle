@@ -61,8 +61,6 @@ class DynamicRouteLoaderTest extends KernelTestCase
         $manager->persist($entity);
         $manager->flush($entity);
 
-        $this->getRouterCache()->regenerateCache();
-
         /** @var array $match */
         $match = $this->getRouter()->match('/foo/bar');
 

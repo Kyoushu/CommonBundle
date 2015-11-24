@@ -2,6 +2,8 @@
 
 namespace Kyoushu\CommonBundle\Tests\Upload;
 
+use Doctrine\ORM\EntityManager;
+use Kyoushu\CommonBundle\Tests\Entity\UploadEntity;
 use Kyoushu\CommonBundle\Tests\KernelTestCase;
 use Kyoushu\CommonBundle\Upload\UploadHandler;
 use Symfony\Component\HttpFoundation\File\File;
@@ -16,6 +18,17 @@ class UploadHandlerTest extends KernelTestCase
         ));
     }
 
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return self::$kernel
+            ->getContainer()
+            ->get('doctrine.orm.default_entity_manager')
+        ;
+    }
+
     public function testProcess()
     {
 
@@ -27,7 +40,7 @@ class UploadHandlerTest extends KernelTestCase
 
         $handler = new UploadHandler($tempDir);
 
-        $upload = new MockUpload();
+        $upload = new UploadEntity();
         $upload->setFile(new File($sourcePath));
 
         $handler->process($upload);
@@ -37,6 +50,32 @@ class UploadHandlerTest extends KernelTestCase
 
         $path = sprintf('%s/%s', $tempDir, $upload->getRelPath());
         $this->assertFileExists($path);
+
+        $this->assertRegExp('/^uploads\/foo\/bar\/test_[0-9a-z]{7}\.txt$/', $upload->getRelPath());
+
+    }
+
+    public function testProcessEventListener()
+    {
+
+        /** @var UploadHandler  $uploadHandler */
+        $uploadHandler = self::$kernel->getContainer()->get('kyoushu_common.upload.handler');
+        $webDir = $uploadHandler->getWebDir();
+
+        $sourcePath = sprintf('%s/../Resources/upload/test.txt', __DIR__);
+        $this->assertFileExists($sourcePath);
+
+        $upload = new UploadEntity();
+        $upload->setFile(new File($sourcePath));
+
+        $manager = $this->getEntityManager();
+        $manager->persist($upload);
+        $manager->flush();
+
+        $path = sprintf('%s/%s', $webDir, $upload->getRelPath());
+        $this->assertFileExists($path);
+
+        $this->assertRegExp('/^uploads\/foo\/bar\/test_[0-9a-z]{7}\.txt$/', $upload->getRelPath());
 
     }
 
