@@ -72,18 +72,38 @@ interface EntityFinderInterface
     public function getResult();
 
     /**
+     * Fully namespaced class for the entity
+     *
      * @return string
      */
     public function getEntityClass();
 
     /**
+     * Creates a query builder used to fetch entities
+     *
      * @return QueryBuilder
      */
-    public function createQueryBuilder();
+    public function createResultQueryBuilder();
 
     /**
+     * Creates a query builder used to perform a total count
+     *
+     * @return QueryBuilder
+     */
+    public function createTotalQueryBuilder();
+
+    /**
+     * Configures a query builder to fetch entities. The query builder should not be paginated with this method.
+     *
      * @param QueryBuilder $queryBuilder
      */
-    public function configureQueryBuilder(QueryBuilder $queryBuilder);
+    public function configureResultQueryBuilder(QueryBuilder $queryBuilder);
+
+    /**
+     * Configures a query builder to perform a total count
+     *
+     * @param QueryBuilder $queryBuilder
+     */
+    public function configureTotalQueryBuilder(QueryBuilder $queryBuilder);
 
 }

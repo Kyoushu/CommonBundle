@@ -180,8 +180,7 @@ abstract class AbstractEntityFinder implements EntityFinderInterface
     public function getTotal()
     {
         return (int)$this
-            ->createQueryBuilder()
-            ->select(sprintf('COUNT(DISTINCT %s.id)', self::ROOT_ENTITY_ALIAS))
+            ->createTotalQueryBuilder()
             ->getQuery()
             ->getSingleScalarResult()
         ;
@@ -193,7 +192,7 @@ abstract class AbstractEntityFinder implements EntityFinderInterface
         $perPage = $this->getPerPage();
         $page = $this->getPage();
 
-        $queryBuilder = $this->createQueryBuilder();
+        $queryBuilder = $this->createResultQueryBuilder();
 
         try
         {
@@ -235,14 +234,29 @@ abstract class AbstractEntityFinder implements EntityFinderInterface
     /**
      * @return QueryBuilder
      */
-    public function createQueryBuilder()
+    public function createResultQueryBuilder()
     {
         $queryBuilder = $this
             ->getRepository()
             ->createQueryBuilder(self::ROOT_ENTITY_ALIAS)
         ;
 
-        $this->configureQueryBuilder($queryBuilder);
+        $this->configureResultQueryBuilder($queryBuilder);
+
+        return $queryBuilder;
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    public function createTotalQueryBuilder()
+    {
+        $queryBuilder = $this
+            ->getRepository()
+            ->createQueryBuilder(self::ROOT_ENTITY_ALIAS)
+        ;
+
+        $this->configureTotalQueryBuilder($queryBuilder);
 
         return $queryBuilder;
     }
@@ -250,8 +264,17 @@ abstract class AbstractEntityFinder implements EntityFinderInterface
     /**
      * @param QueryBuilder $queryBuilder
      */
-    public function configureQueryBuilder(QueryBuilder $queryBuilder)
+    public function configureResultQueryBuilder(QueryBuilder $queryBuilder)
     {
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     */
+    public function configureTotalQueryBuilder(QueryBuilder $queryBuilder)
+    {
+        $this->configureResultQueryBuilder($queryBuilder);
+        $queryBuilder->select(sprintf('COUNT(DISTINCT %s.id)', self::ROOT_ENTITY_ALIAS));
     }
 
 }

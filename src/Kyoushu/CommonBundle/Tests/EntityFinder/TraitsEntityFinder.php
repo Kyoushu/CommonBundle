@@ -70,7 +70,7 @@ class TraitsEntityFinder extends AbstractEntityFinder
     /**
      * @param QueryBuilder $queryBuilder
      */
-    public function configureQueryBuilder(QueryBuilder $queryBuilder)
+    public function configureResultQueryBuilder(QueryBuilder $queryBuilder)
     {
         $title = $this->getTitle();
         if($title !== null){
