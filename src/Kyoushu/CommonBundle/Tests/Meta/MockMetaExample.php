@@ -50,4 +50,20 @@ class MockMetaExample
      */
     public $mixedProperty;
 
+    /**
+     * @return null
+     */
+    public function getNullMethod()
+    {
+        return null;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getIntMethod()
+    {
+        return 1;
+    }
+
 }

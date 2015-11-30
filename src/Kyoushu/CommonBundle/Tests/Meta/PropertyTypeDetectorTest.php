@@ -22,6 +22,9 @@ class PropertyTypeDetectorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('array', PropertyTypeDetector::detect($class, 'objectArrayProperty'));
         $this->assertEquals('string', PropertyTypeDetector::detect($class, 'mixedProperty'));
 
+        $this->assertEquals('NULL', PropertyTypeDetector::detect($class, 'nullMethod'));
+        $this->assertEquals('integer', PropertyTypeDetector::detect($class, 'intMethod'));
+
     }
 
 }

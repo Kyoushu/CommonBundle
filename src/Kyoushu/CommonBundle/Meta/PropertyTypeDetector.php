@@ -6,6 +6,7 @@ class PropertyTypeDetector
 {
 
     const REGEX_DOC_VAR_ANNOTATION = '/@var (?<types>[^\n]+)/';
+    const REGEX_DOC_RETURN_ANNOTATION = '/@return (?<types>[^\n]+)/';
 
     protected static $typeMap = array(
         'DateTime' => '\DateTime',
@@ -15,13 +16,73 @@ class PropertyTypeDetector
         'float' => 'double'
     );
 
+    /**
+     * @param string $propertyName
+     * @return string
+     */
+    protected static function getPropertyGetterMethodName($propertyName)
+    {
+        return sprintf('get%s', ucfirst($propertyName));
+    }
+
+    /**
+     * @param string|object $class
+     * @return \ReflectionClass
+     */
+    protected static function getClassReflection($class)
+    {
+        return new \ReflectionClass($class);
+    }
+
+    /**
+     * @param string $class
+     * @param string $propertyName
+     * @return null|\ReflectionProperty
+     */
+    protected static function getPropertyReflection($class, $propertyName)
+    {
+        $classRef = self::getClassReflection($class);
+        if(!$classRef->hasProperty($propertyName)) return null;
+        return $classRef->getProperty($propertyName);
+    }
+
+    /**
+     * @param string|object $class
+     * @param string $propertyName
+     * @return null|\ReflectionMethod
+     */
+    protected static function getPropertyGetterMethodReflection($class, $propertyName)
+    {
+        $classRef = self::getClassReflection($class);
+        $methodName = self::getPropertyGetterMethodName($propertyName);
+        if(!$classRef->hasMethod($methodName)) return null;
+        return $classRef->getMethod($methodName);
+    }
+
+    /**
+     * @param string $class
+     * @param string $propertyName
+     * @return null|string
+     */
     public static function detect($class, $propertyName)
     {
 
         $classRef = new \ReflectionClass($class);
-        $propRef = $classRef->getProperty($propertyName);
 
-        if(!preg_match(self::REGEX_DOC_VAR_ANNOTATION, $propRef->getDocComment(), $match)){
+        $propRef = self::getPropertyReflection($class, $propertyName);
+        $methodRef = self::getPropertyGetterMethodReflection($class, $propertyName);
+
+        if($propRef){
+            if(!preg_match(self::REGEX_DOC_VAR_ANNOTATION, $propRef->getDocComment(), $match)){
+                return null;
+            }
+        }
+        elseif($methodRef){
+            if(!preg_match(self::REGEX_DOC_RETURN_ANNOTATION, $methodRef->getDocComment(), $match)){
+                return null;
+            }
+        }
+        else{
             return null;
         }
 
