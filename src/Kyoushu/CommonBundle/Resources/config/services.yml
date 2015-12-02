@@ -24,3 +24,9 @@ services:
            - @kyoushu_common.upload.handler
        tags:
            - { name: doctrine.event_subscriber, connection: default }
+
+    kyoushu_common.video.meta_factory:
+        class: Kyoushu\CommonBundle\Video\Meta\MetaFactory
+        arguments:
+            - "%kernel.cache_dir%"
+            - "%kernel.root_dir%/../web"
