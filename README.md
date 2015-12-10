@@ -30,6 +30,7 @@ $bundles = array(
 
 * Documentation for upload handler
 * Documentation for dynamic routes
+* Documentation for videos and video metadata
     
 ## Entity Traits
 
