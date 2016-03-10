@@ -97,15 +97,11 @@ class AbstractEntityFinderTest extends KernelTestCase
             'createdAfter' => '3rd Feb 2016 00:00'
         ));
 
-        $this->assertEquals(
-            array(
-                'page' => 3,
-                'perPage' => null,
-                'title' => 'bar',
-                'createdAfter' => '2016-02-03T00:00:00+00:00'
-            ),
-            $finder->getRouteParameters()
-        );
+        $this->assertEquals(3, $finder->getPage());
+        $this->assertNull($finder->getPerPage());
+        $this->assertEquals('bar', $finder->getTitle());
+        $this->assertInstanceOf('\DateTime', $finder->getCreatedAfter());
+        $this->assertEquals('2016-02-03 00:00', $finder->getCreatedAfter()->format('Y-m-d H:i'));
 
     }
 

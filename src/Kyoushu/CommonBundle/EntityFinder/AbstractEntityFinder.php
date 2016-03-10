@@ -7,8 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Kyoushu\CommonBundle\Exception\EntityFinderException;
-use Kyoushu\CommonBundle\Meta\PropertyTypeDetector;
+use Kyoushu\CommonBundle\EntityFinder\Transformer\RouteParameterValueTransformer;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -99,58 +98,57 @@ abstract class AbstractEntityFinder implements EntityFinderInterface
     }
 
     /**
+     * @return PropertyAccessor
+     */
+    protected function createPropertyAccessor()
+    {
+        return PropertyAccess::createPropertyAccessor();
+    }
+
+    /**
      * @return array
      */
     public function getRouteParameters()
     {
-        $parameters = array();
-        foreach($this->getRouteParameterKeys() as $key){
-            $value = $this->propertyAccessor->getValue($this, $key);
-            if($value === 'NULL'){
-                $value = self::ROUTE_PARAMETER_NULL_PLACEHOLDER;
-            }
-            elseif(is_object($value)){
-                if($value instanceof \DateTime){
-                    $value = $value->format('c');
-                }
-            }
-
-            $parameters[$key] = $value;
+        $keys = array();
+        if(method_exists($this, 'getRouteParameterKeys')){
+            $keys = $this->getRouteParameterKeys();
         }
+
+        $parameters = array();
+
+        $propertyAccessor = $this->createPropertyAccessor();
+        $transformer = new RouteParameterValueTransformer();
+
+        foreach($keys as $key){
+            $value = $propertyAccessor->getValue($this, $key);
+            $parameters[$key] = $transformer->transform($value);
+        }
+
         return $parameters;
     }
 
-    public function setRouteParameters(array $parameters)
+    /**
+     * @param array $routeParameters
+     * @return $this
+     */
+    public function setRouteParameters(array $routeParameters)
     {
-
-        $keys = $this->getRouteParameterKeys();
-
-        foreach(array_keys($parameters) as $key){
-            if(!in_array($key, $keys)){
-                throw new EntityFinderException(sprintf(
-                    '%s is not a valid route parameter key for %s',
-                    $key,
-                    get_class($this)
-                ));
-            }
+        $keys = array();
+        if(method_exists($this, 'getRouteParameterKeys')){
+            $keys = $this->getRouteParameterKeys();
         }
 
-        foreach($this->getRouteParameterKeys() as $key){
-            if(!isset($parameters[$key])) continue;
-            $value = $parameters[$key];
+        $propertyAccessor = $this->createPropertyAccessor();
+        $transformer = new RouteParameterValueTransformer();
 
-            if($value === self::ROUTE_PARAMETER_NULL_PLACEHOLDER){
-                $value = null;
-            }
-
-            $detectedType = PropertyTypeDetector::detect($this, $key);
-            if($detectedType === '\DateTime'){
-                $value = new \DateTime($value);
-            }
-
-            $this->setPropertyValue($key, $value);
-
+        foreach($keys as $key){
+            if(!isset($routeParameters[$key])) continue;
+            $value = $routeParameters[$key];
+            $value = $transformer->inverseTransform($value);
+            $propertyAccessor->setValue($this, $key, $value);
         }
+
         return $this;
     }
 

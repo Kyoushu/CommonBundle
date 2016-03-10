@@ -55,6 +55,9 @@ class TraitsEntityFinder extends AbstractEntityFinder
      */
     public function setCreatedAfter($createdAfter)
     {
+        if($createdAfter !== null && !($createdAfter instanceof \DateTime)){
+            $createdAfter = new \DateTime($createdAfter);
+        }
         $this->createdAfter = $createdAfter;
         return $this;
     }
