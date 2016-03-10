@@ -1,6 +1,6 @@
 parameters:
-    kernel.secret: abcd123
-    locale: en
+    kernel.secret: "abcd123"
+    locale: "en"
 
 framework:
     test: ~
@@ -18,7 +18,7 @@ framework:
 
 doctrine:
     dbal:
-        driver:   pdo_sqlite
+        driver:   "pdo_sqlite"
         user:     ~
         password: ~
         memory:   false
@@ -31,13 +31,11 @@ doctrine:
             KyoushuCommonBundle:
                 type: annotation
                 dir: "%kernel.root_dir%/../Tests/Entity"
-                prefix: Kyoushu\CommonBundle\Tests\Entity
+                prefix: "Kyoushu\\CommonBundle\\Tests\\Entity"
 
 twig:
     debug:            true
     strict_variables: true
-    paths:
-        "%kernel.root_dir%/../Resources/views": "KyoushuCommonBundle"
 
 stof_doctrine_extensions:
     default_locale: %locale%

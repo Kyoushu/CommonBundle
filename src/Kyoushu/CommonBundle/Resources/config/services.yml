@@ -3,14 +3,14 @@ services:
     kyoushu_common.routing.router_cache:
         class: Kyoushu\CommonBundle\Routing\RouterCache
         arguments:
-            - @router
+            - "@router"
 
     kyoushu_common.routing.dynamic_route_loader:
         class: Kyoushu\CommonBundle\Routing\DynamicRouteLoader
         arguments:
-            - @doctrine.orm.default_entity_manager
+            - "@doctrine.orm.default_entity_manager"
         tags:
-            - { name: routing.loader }
+            - { name: "routing.loader" }
 
     kyoushu_common.upload.handler:
         class: Kyoushu\CommonBundle\Upload\UploadHandler
@@ -20,8 +20,8 @@ services:
     kyoushu_common.event_listener.entity_subscriber:
        class: Kyoushu\CommonBundle\EventListener\EntitySubscriber
        arguments:
-           - @kyoushu_common.routing.router_cache
-           - @kyoushu_common.upload.handler
+           - "@kyoushu_common.routing.router_cache"
+           - "@kyoushu_common.upload.handler"
        tags:
            - { name: doctrine.event_subscriber, connection: default }
 

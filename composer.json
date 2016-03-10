@@ -2,7 +2,7 @@
   "name": "kyoushu/common-bundle",
   "description": "",
   "type": "symfony-bundle",
-  "license": "proprietary",
+  "license": "MIT",
   "authors": [
     {
       "name": "James Willans",
@@ -15,8 +15,8 @@
     "symfony/twig-bundle": ">=2.3",
     "doctrine/doctrine-bundle": "~1.5",
     "doctrine/orm": "~2.5",
-    "symfony/validator": "~2.3",
-    "symfony/form": "~2.3",
+    "symfony/validator": ">=2.3",
+    "symfony/form": ">=2.3",
     "stof/doctrine-extensions-bundle": "^1.2"
   },
   "require-dev": {
