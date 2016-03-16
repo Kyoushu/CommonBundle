@@ -28,9 +28,80 @@ $bundles = array(
 
 ## Todo
 
-* Documentation for upload handler
 * Documentation for dynamic routes
 * Documentation for videos and video metadata
+
+## Upload Handler
+
+The bundle provides an upload handler which will copy uploaded files to a target directory on update/persist.
+
+All you need to do is implement Kyoushu\CommonBundle\Upload\UploadInterface in your entity.
+
+```php
+namespace AppBundle\Entity;
+
+use Kyoushu\CommonBundle\Upload\UploadInterface;
+use Symfony\Component\HttpFoundation\File\File;
+
+class MyUploadEntity implements UploadInterface
+{
+
+    /**
+     * @var File|null
+     */
+    protected $file;
+    
+    /**
+     * @var string|null
+     */
+    protected $relPath;
+    
+    /**
+     * @return File|null
+     */
+    public function getFile()
+    {
+        return $this->file;
+    }
+    
+    /**
+     * @param File|null $file
+     * @return $this
+     */
+    public function setFile(File $file = null)
+    {
+        $this->file = $file;
+        return $this;
+    }
+    
+    /**
+     * @return string|null
+     */
+    public function getRelPath()
+    {
+        return $this->relPath;
+    }
+
+    /**
+     * @param string|null $relPath
+     * @return $this
+     */
+    public function setRelPath($relPath)
+    {
+        $this->relPath = $relPath;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRelDir()
+    {
+        return 'sub/dir/where/upload/should/go';
+    }
+
+}
+```
     
 ## Entity Traits
 
@@ -39,7 +110,6 @@ The bundle provides a range of traits to speed up the creation of entities
 ```php
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Kyoushu\CommonBundle\Entity\Traits as EntityTraits;
 
 class MyEntity
