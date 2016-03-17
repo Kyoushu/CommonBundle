@@ -16,64 +16,98 @@ class UploadParentEntity
 
     /**
      * @var UploadChildEntity|null
-     * @ORM\OneToOne(targetEntity="Kyoushu\CommonBundle\Tests\Entity\UploadChildEntity", mappedBy="parent", cascade={"all"})
+     * @ORM\OneToOne(targetEntity="Kyoushu\CommonBundle\Tests\Entity\UploadChildEntity", inversedBy="parent", cascade={"all"})
      */
-    protected $child;
+    protected $oneToOneChild;
 
     /**
      * @var UploadChildEntity[]|ArrayCollection
      * @ORM\ManyToMany(targetEntity="Kyoushu\CommonBundle\Tests\Entity\UploadChildEntity", inversedBy="parents", cascade={"all"})
      */
-    protected $children;
+    protected $manyToManyChildren;
+
+    /**
+     * @var UploadChildEntity[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="Kyoushu\CommonBundle\Tests\Entity\UploadChildEntity", mappedBy="manyToOneParent", cascade={"all"})
+     */
+    protected $oneToManyChildren;
 
     public function __construct()
     {
-        $this->children = new ArrayCollection();
+        $this->manyToManyChildren = new ArrayCollection();
+        $this->oneToManyChildren = new ArrayCollection();
     }
 
     /**
      * @return UploadChildEntity|null
      */
-    public function getChild()
+    public function getOneToOneChild()
     {
-        return $this->child;
+        return $this->oneToOneChild;
     }
 
     /**
      * @param UploadChildEntity|null $child
      * @return $this
      */
-    public function setChild(UploadChildEntity $child = null)
+    public function setOneToOneChild(UploadChildEntity $child = null)
     {
-        if($child) $child->setParent($this);
-        $this->child = $child;
+        $this->oneToOneChild = $child;
         return $this;
     }
 
     /**
-     * @return UploadChildEntity[]|ArrayCollection
+     * @return ArrayCollection|UploadChildEntity[]
      */
-    public function getChildren()
+    public function getManyToManyChildren()
     {
-        return $this->children;
+        return $this->manyToManyChildren;
     }
 
     /**
      * @param UploadChildEntity $child
      * @return $this
      */
-    public function addChild(UploadChildEntity $child)
+    public function addManyToManyChild(UploadChildEntity $child)
     {
-        $this->children->add($child);
+        $this->manyToManyChildren->add($child);
         return $this;
     }
 
     /**
      * @param UploadChildEntity $child
      */
-    public function removeChild(UploadChildEntity $child)
+    public function removeManyToManyChild(UploadChildEntity $child)
     {
-        $this->children->removeElement($child);
+        $this->manyToManyChildren->removeElement($child);
+    }
+
+    /**
+     * @return ArrayCollection|UploadChildEntity[]
+     */
+    public function getOneToManyChildren()
+    {
+        return $this->oneToManyChildren;
+    }
+
+    /**
+     * @param UploadChildEntity $child
+     * @return $this
+     */
+    public function addOneToManyChild(UploadChildEntity $child)
+    {
+        $child->setManyToOneParent($this);
+        $this->oneToManyChildren->add($child);
+        return $this;
+    }
+
+    /**
+     * @param UploadChildEntity $child
+     */
+    public function removeOneToManyChild(UploadChildEntity $child)
+    {
+        $this->oneToManyChildren->removeElement($child);
+        $child->setManyToOneParent(null);
     }
 
 }

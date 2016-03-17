@@ -2,6 +2,7 @@
 
 namespace Kyoushu\CommonBundle\Tests\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Kyoushu\CommonBundle\Entity\Traits\IdTrait;
 use Kyoushu\CommonBundle\Upload\UploadInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -28,9 +29,26 @@ class UploadChildEntity implements UploadInterface
 
     /**
      * @var UploadParentEntity|null
-     * @ORM\OneToOne(targetEntity="Kyoushu\CommonBundle\Tests\Entity\UploadParentEntity", inversedBy="child")
+     * @ORM\OneToOne(targetEntity="Kyoushu\CommonBundle\Tests\Entity\UploadParentEntity", mappedBy="oneToOneChild")
      */
-    protected $parent;
+    protected $oneToOneParent;
+
+    /**
+     * @var UploadParentEntity[]|ArrayCollection
+     * @ORM\ManyToMany(targetEntity="Kyoushu\CommonBundle\Tests\Entity\UploadParentEntity", inversedBy="manyToManyChildren")
+     */
+    protected $manyToManyParents;
+
+    /**
+     * @var UploadParentEntity|null
+     * @ORM\ManyToOne(targetEntity="Kyoushu\CommonBundle\Tests\Entity\UploadParentEntity", inversedBy="oneToManyChildren")
+     */
+    protected $manyToOneParent;
+
+    public function __construct()
+    {
+        $this->manyToManyParents = new ArrayCollection();
+    }
 
     public function getFile()
     {
@@ -62,18 +80,44 @@ class UploadChildEntity implements UploadInterface
     /**
      * @return UploadParentEntity|null
      */
-    public function getParent()
+    public function getOneToOneParent()
     {
-        return $this->parent;
+        return $this->oneToOneParent;
     }
 
     /**
      * @param UploadParentEntity|null $parent
      * @return $this
      */
-    public function setParent(UploadParentEntity $parent = null)
+    public function setOneToOneParent($parent)
     {
-        $this->parent = $parent;
+        $this->oneToOneParent = $parent;
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|UploadParentEntity[]
+     */
+    public function getManyToManyParents()
+    {
+        return $this->manyToManyParents;
+    }
+
+    /**
+     * @return UploadParentEntity|null
+     */
+    public function getManyToOneParent()
+    {
+        return $this->manyToOneParent;
+    }
+
+    /**
+     * @param UploadParentEntity|null $manyToOneParent
+     * @return $this
+     */
+    public function setManyToOneParent($manyToOneParent)
+    {
+        $this->manyToOneParent = $manyToOneParent;
         return $this;
     }
 
