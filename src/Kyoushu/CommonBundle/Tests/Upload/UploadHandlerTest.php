@@ -3,7 +3,9 @@
 namespace Kyoushu\CommonBundle\Tests\Upload;
 
 use Doctrine\ORM\EntityManager;
+use Kyoushu\CommonBundle\Tests\Entity\UploadChildEntity;
 use Kyoushu\CommonBundle\Tests\Entity\UploadEntity;
+use Kyoushu\CommonBundle\Tests\Entity\UploadParentEntity;
 use Kyoushu\CommonBundle\Tests\KernelTestCase;
 use Kyoushu\CommonBundle\Upload\UploadHandler;
 use Symfony\Component\HttpFoundation\File\File;
@@ -76,6 +78,86 @@ class UploadHandlerTest extends KernelTestCase
         $this->assertFileExists($path);
 
         $this->assertRegExp('/^uploads\/foo\/bar\/test_[0-9a-z]{7}\.txt$/', $upload->getRelPath());
+
+    }
+
+    public function testProcessEventListenerCascadeOneToOne()
+    {
+
+        /** @var UploadHandler  $uploadHandler */
+        $uploadHandler = self::$kernel->getContainer()->get('kyoushu_common.upload.handler');
+        $webDir = $uploadHandler->getWebDir();
+
+        $sourcePath = sprintf('%s/../Resources/upload/test.txt', __DIR__);
+        $this->assertFileExists($sourcePath);
+
+        $parent = new UploadParentEntity();
+
+        $child = new UploadChildEntity();
+        $child->setFile(new File($sourcePath));
+
+        $parent->setChild($child);
+
+        $manager = $this->getEntityManager();
+        $manager->persist($parent);
+        $manager->flush();
+
+        $path = sprintf('%s/%s', $webDir, $child->getRelPath());
+        $this->assertFileExists($path);
+
+        $this->assertNotNull($parent->getChild());
+        $path = sprintf('%s/%s', $webDir, $parent->getChild()->getRelPath());
+        $this->assertFileExists($path);
+
+        $fetchedChild = $this->getEntityManager()
+            ->getRepository('Kyoushu\CommonBundle\Tests\Entity\UploadChildEntity')
+            ->find($child->getId());
+        $this->assertNotNull($fetchedChild);
+
+        $path = sprintf('%s/%s', $webDir, $fetchedChild->getRelPath());
+        $this->assertFileExists($path);
+
+    }
+
+    public function testProcessEventListenerCascadeManyToMany()
+    {
+
+        /** @var UploadHandler $uploadHandler */
+        $uploadHandler = self::$kernel->getContainer()->get('kyoushu_common.upload.handler');
+        $webDir = $uploadHandler->getWebDir();
+
+        $sourcePath = sprintf('%s/../Resources/upload/test.txt', __DIR__);
+        $this->assertFileExists($sourcePath);
+
+        $parent = new UploadParentEntity();
+
+        $childOne = new UploadChildEntity();
+        $childOne->setFile(new File($sourcePath));
+
+        $childTwo = new UploadChildEntity();
+        $childTwo->setFile(new File($sourcePath));
+
+        $parent->addChild($childOne);
+        $parent->addChild($childTwo);
+
+        $manager = $this->getEntityManager();
+        $manager->persist($parent);
+        $manager->flush();
+
+        $this->assertCount(2, $parent->getChildren());
+
+        foreach($parent->getChildren() as $child){
+            $path = sprintf('%s/%s', $webDir, $child->getRelPath());
+            $this->assertFileExists($path);
+
+            $fetchedChild = $this->getEntityManager()
+                ->getRepository('Kyoushu\CommonBundle\Tests\Entity\UploadChildEntity')
+                ->find($child->getId());
+            $this->assertNotNull($fetchedChild);
+
+            $path = sprintf('%s/%s', $webDir, $fetchedChild->getRelPath());
+            $this->assertFileExists($path);
+        }
 
     }
 
